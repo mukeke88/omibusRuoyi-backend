@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mk_activity.mapper.MkActivityMapper">
+    <insert id="saveActivity">
+        INSERT INTO activities (activity_name, start_time, end_time, description, create_time, update_time)
+        VALUES (#{activityName}, #{startTime}, #{endTime}, #{description}, NOW(), NOW())
+    </insert>
+    <select id="getActivities" resultType="com.ruoyi.mk_activity.domain.MkActivity">
+        SELECT * FROM mk_activities
+    </select>
+    <select id="getActivityById" parameterType="Long" resultType="com.ruoyi.mk_activity.domain.MkActivity">
+        SELECT * FROM mk_activities
+        WHERE id = #{id}
+    </select>
+</mapper>
