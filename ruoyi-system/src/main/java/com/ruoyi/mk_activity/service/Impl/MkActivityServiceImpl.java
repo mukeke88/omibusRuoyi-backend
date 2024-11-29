@@ -4,7 +4,9 @@ import com.ruoyi.common.constant.UserConstants;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.mk_activity.domain.MkActivity;
+import com.ruoyi.mk_activity.domain.MkActivityTimeLog;
 import com.ruoyi.mk_activity.mapper.MkActivityMapper;
+import com.ruoyi.mk_activity.mapper.MkActivityTimeLogMapper;
 import com.ruoyi.mk_activity.service.IMkActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,9 @@ import java.util.List;
 public class MkActivityServiceImpl implements IMkActivityService {
     @Autowired
     private MkActivityMapper mkActivityMapper;
+
+    @Autowired
+    private MkActivityTimeLogMapper mkActivityTimeLogMapper;
 
     @Override
     public int saveActivity(MkActivity activity) {
@@ -62,7 +67,16 @@ public class MkActivityServiceImpl implements IMkActivityService {
         activity.setStartTime(new Date());
         activity.setPauseTime(null); //重置以不存数据库
         activity.setTotalTime(null); //重置以不存数据库
-        return mkActivityMapper.updateActivity(activity) > 0;
+        mkActivityMapper.updateActivity(activity);
+
+        // Record the start action in the time log
+        MkActivityTimeLog log = new MkActivityTimeLog();
+        log.setActivityId(id);
+        log.setActionType("start");
+        log.setActionTime(new Date());
+        mkActivityTimeLogMapper.insertActivityLog(log);
+
+        return true;
     }
 
     @Override
@@ -76,6 +90,15 @@ public class MkActivityServiceImpl implements IMkActivityService {
         activity.setTotalTime(activity.getTotalTime() + (int) elapsedTime);
         activity.setPauseTime(new Date());
         activity.setStartTime(null);//重置以不存数据库
-        return mkActivityMapper.updateActivity(activity) > 0;
+        mkActivityMapper.updateActivity(activity);
+
+        // Record the pause action in the time log
+        MkActivityTimeLog log = new MkActivityTimeLog();
+        log.setActivityId(id);
+        log.setActionType("pause");
+        log.setActionTime(new Date());
+        mkActivityTimeLogMapper.insertActivityLog(log);
+
+        return true;
     }
 }

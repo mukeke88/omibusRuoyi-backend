@@ -37,6 +37,13 @@
         <if test="activityName != null and activityName != ''">
             AND activity_name LIKE CONCAT('%', #{activityName}, '%')
         </if>
+        ORDER BY
+        CASE
+        WHEN status = 'active' THEN 1
+        WHEN status = 'paused' THEN 2
+        ELSE 3
+        END,
+        update_time DESC
     </select>
     <select id="getActivityById" parameterType="Long" resultType="com.ruoyi.mk_activity.domain.MkActivity">
         SELECT * FROM mk_activities
