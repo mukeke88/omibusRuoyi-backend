@@ -4,14 +4,18 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.mk_activity.mapper.MkActivityMapper">
     <insert id="saveActivity">
-        INSERT INTO mk_activities (activity_name, start_time, end_time, description, create_time, update_time)
-        VALUES (#{activityName}, #{startTime}, #{endTime}, #{description}, NOW(), NOW())
+        INSERT INTO mk_activities (activity_name, start_time, pause_time, description, create_time, update_time)
+        VALUES (#{activityName}, #{startTime}, #{pauseTime}, #{description}, NOW(), NOW())
     </insert>
     <update id="updateActivity" parameterType="MkActivity">
         UPDATE mk_activities
         <set>
             <if test="activityName != null and activityName != ''">activity_name = #{activityName},</if>
             <if test="description != null and description != ''">description = #{description},</if>
+            <if test="status != null and status != ''"> status = #{status},</if>
+            <if test="startTime !=null">start_time = #{startTime},</if>
+            <if test="pauseTime !=null">pause_time = #{pauseTime},</if>
+            <if test="totalTime !=null">total_time = #{totalTime},</if>
             update_time = sysdate()
         </set>
         WHERE id = #{id}

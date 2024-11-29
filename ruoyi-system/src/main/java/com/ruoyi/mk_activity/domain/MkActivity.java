@@ -10,9 +10,11 @@ import java.util.Date;
 public class MkActivity  extends BaseEntity {
     private Long id;
     private String activityName;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private Date startTime;
+    private Date pauseTime;
     private String description;
+    private String status;
     private Date createTime;
     private Date updateTime;
+    private Integer totalTime;
 }

@@ -9,6 +9,7 @@ import com.ruoyi.mk_activity.service.IMkActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -49,5 +50,32 @@ public class MkActivityServiceImpl implements IMkActivityService {
     @Override
     public int deleteActivityByIds(Long[] activityIds) {
         return mkActivityMapper.deleteActivityByIds(activityIds);
+    }
+
+    @Override
+    public boolean startActivity(Long id) {
+        MkActivity activity = mkActivityMapper.getActivityById(id);
+        if (activity == null || "active".equals(activity.getStatus())) {
+            throw new ServiceException("Activity not found or already active");
+        }
+        activity.setStatus("active");
+        activity.setStartTime(new Date());
+        activity.setPauseTime(null); //重置以不存数据库
+        activity.setTotalTime(null); //重置以不存数据库
+        return mkActivityMapper.updateActivity(activity) > 0;
+    }
+
+    @Override
+    public boolean pauseActivity(Long id) {
+        MkActivity activity = mkActivityMapper.getActivityById(id);
+        if (activity == null || "paused".equals(activity.getStatus())) {
+            throw new ServiceException("Activity not found or already paused");
+        }
+        activity.setStatus("paused");long currentTime = System.currentTimeMillis();
+        long elapsedTime = (currentTime - activity.getStartTime().getTime()) / 1000; // Calculate time in seconds
+        activity.setTotalTime(activity.getTotalTime() + (int) elapsedTime);
+        activity.setPauseTime(new Date());
+        activity.setStartTime(null);//重置以不存数据库
+        return mkActivityMapper.updateActivity(activity) > 0;
     }
 }

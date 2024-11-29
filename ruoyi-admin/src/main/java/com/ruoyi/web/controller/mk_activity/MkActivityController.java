@@ -58,20 +58,24 @@ public class MkActivityController extends BaseController {
         return toAjax(activityService.deleteActivityByIds(ids));
     }
 
-    @PostMapping("/start")
-    public AjaxResult startActivity(@RequestBody MkActivity activity) {
-        activity.setStartTime(LocalDateTime.now());
-        activityService.saveActivity(activity);
-        return AjaxResult.success();
+    @PostMapping("/start/{id}")
+    public AjaxResult startActivity(@PathVariable("id") Long id) {
+        boolean result = activityService.startActivity(id);
+        if (result) {
+            return success("Activity started successfully");
+        } else {
+            return error("Failed to start activity");
+        }
     }
 
-    @PutMapping("/end/{id}")
-    public AjaxResult endActivity(@PathVariable Long id) {
-        MkActivity activity = activityService.getActivityById(id);
-        if (activity != null) {
-            activity.setEndTime(LocalDateTime.now());
+    @PostMapping("/pause/{id}")
+    public AjaxResult pauseActivity(@PathVariable("id") Long id) {
+        boolean result = activityService.pauseActivity(id);
+        if (result) {
+            return success("Activity paused successfully");
+        } else {
+            return error("Failed to pause activity");
         }
-        return toAjax(activityService.saveActivity(activity));
     }
 
 }

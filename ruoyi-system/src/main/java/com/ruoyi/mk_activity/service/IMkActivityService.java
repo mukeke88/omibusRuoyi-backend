@@ -16,4 +16,8 @@ public interface IMkActivityService {
     int updateActivity(MkActivity activity);
 
     int deleteActivityByIds(Long[] activityIds);
+
+    boolean startActivity(Long id);
+
+    boolean pauseActivity(Long id);
 }
