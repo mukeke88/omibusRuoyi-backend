@@ -4,14 +4,41 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.mk_activity.mapper.MkActivityMapper">
     <insert id="saveActivity">
-        INSERT INTO activities (activity_name, start_time, end_time, description, create_time, update_time)
+        INSERT INTO mk_activities (activity_name, start_time, end_time, description, create_time, update_time)
         VALUES (#{activityName}, #{startTime}, #{endTime}, #{description}, NOW(), NOW())
     </insert>
+    <update id="updateActivity" parameterType="MkActivity">
+        UPDATE mk_activities
+        <set>
+            <if test="activityName != null and activityName != ''">activity_name = #{activityName},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            update_time = sysdate()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteActivityByIds" parameterType="Long">
+        update mk_activities
+        set is_deleted = 1
+        where id in
+        <foreach item="activityId" collection="array" open="(" separator="," close=")">
+            #{activityId}
+        </foreach>
+    </update>
+
     <select id="getActivities" resultType="com.ruoyi.mk_activity.domain.MkActivity">
-        SELECT * FROM mk_activities
+        SELECT *
+        FROM mk_activities
+        where is_deleted = 0
+        <if test="activityName != null and activityName != ''">
+            AND activity_name LIKE CONCAT('%', #{activityName}, '%')
+        </if>
     </select>
     <select id="getActivityById" parameterType="Long" resultType="com.ruoyi.mk_activity.domain.MkActivity">
         SELECT * FROM mk_activities
         WHERE id = #{id}
+    </select>
+    <select id="checkActivityNameUnique" resultType="java.lang.Integer">
+        select count(*) from mk_activities where activity_name = #{activityName}
     </select>
 </mapper>

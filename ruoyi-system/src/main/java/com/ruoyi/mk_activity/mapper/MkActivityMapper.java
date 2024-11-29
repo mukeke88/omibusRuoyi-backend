@@ -8,9 +8,15 @@ import java.util.List;
 @Mapper
 public interface MkActivityMapper {
 
-    void saveActivity(MkActivity activity);
+    int saveActivity(MkActivity activity);
 
     MkActivity getActivityById(Long id);
 
-    List<MkActivity> getActivities();
+    List<MkActivity> getActivities(String activityName);
+
+    int checkActivityNameUnique(String activityName);
+
+    int updateActivity(MkActivity activity);
+
+    int deleteActivityByIds(Long[] activityIds);
 }
